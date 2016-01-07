@@ -16,8 +16,12 @@ before_script:
 - docker login --email='.' --username="${DOCKER_USER}" --password="${DOCKER_PASSWORD}"
   ${DOCKER_REGISTRY}
 - wget -O /tmp/dumb-init.tar.gz 'https://github.com/Yelp/dumb-init/archive/v0.5.0.tar.gz'
-- tar --strip-components=1 -xf /tmp/dumb-init.tar.gz
-- cc -std=gnu99 -static -Wall -Werror -O3 -o dumb-init dumb-init.c
+- mkdir src/
+- tar --strip-components=1 -xf -C src/ /tmp/dumb-init.tar.gz
+- cd src
+- make build
+- cp dumb-init ../
+- cd ../
 script:
 - docker build -t quay.io/docku/dumb-init .
 after_script:
