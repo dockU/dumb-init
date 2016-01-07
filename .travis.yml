@@ -17,7 +17,7 @@ before_script:
   ${DOCKER_REGISTRY}
 - wget -O /tmp/dumb-init.tar.gz 'https://github.com/Yelp/dumb-init/archive/v0.5.0.tar.gz'
 - tar --strip-components=1 -xf /tmp/dumb-init.tar.gz
-- make build
+- cc -std=gnu99 -static -Wall -Werror -O3 -o dumb-init dumb-init.c
 script:
 - docker build -t quay.io/docku/dumb-init .
 after_script:
