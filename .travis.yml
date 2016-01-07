@@ -1,0 +1,24 @@
+notifications:
+  email: false
+  irc:
+    template:
+    - "%{build_url} : (%{branch} - %{commit} - %{commit_subject} : %{author}): %{message}"
+    channels:
+    - secure: ptwEa7VTrvabhO02GxlHPPfnA2JgLDuWvMiWfQXfJzAptHD6I1wxIqs4dFv8POVGcaAOmAt2QGJX1CVZvQmaYu02ecdyTwprwo598AzfBFtRkYKGnu9QqjwK3RYSGjN0AQXZQdG+VV/W1cBa7lpKc6B9UZAtxu96atVn+epGuYioDnwukrV3J72/57eQh/WYDMoHzKXhqHAfkWT9rhoIb7PDRRDg9ZXWJjm2UIC4OUTGWSCEXMQbiqrorvJOvdfQj6dbXsi8X7yFD9Qa458pvFSnTgIsFktVzAWybpttekGnxogR5CAJOcWyvAqNnbs38oZ95+GTd5yKk5OZfyaN9K9FEbEhEaYzvkHBNgvAXIPwCIc5sIH19zDLgna3AVp/EDJFSyjIBjdF91RzyjzR5Q/LfbEu9HSHi3Fv9GJEY6vj194F6GgNjwBULGIx9GibK+xj8tP0wZe/7y9tPxLDxni+ZjsyeyrPi1g8AOduO0tK/mKxDjHCW+41utZVfc7G1tXMIvxBiW0RGIb8z8VaoQfXKqju/RKil1IQXBdKE1Ofv1scDT5Pf9ypKT632c5l4TmKKL9SUIlhpFUBfagroXlapGDmpR2DV1twW4+4Z1UVfzdK859Hb+omblEs6NDv9JNvB8Xqrd0miNpoBHmRZqqrNX9x8Lmc+NCX4H0EDDM=
+  slack:
+    secure: drnu7xn2ubvypoWdau5BNX6tcSc5+4Db+iEekUd2FAyb0xwsbD1/Bu4at2IYblZSTwUPfsGeIxp6FBQa+iHPLB0YJ5aXyAvd30S3TB7eM/96pqGzGHwiZv8Wt/Y5VfWRCdcOA1FZWqRDCPP5k+GPbVK/v6cYJ8BssK9Vzf+XQ6JH2/MfYbgk0pUxsLe314/NvFluZzGYlfyycj9esgzaCmDUmn8BiekVhxayyogLdezVyr+l5Wpw+iKdD3KlxT8naNeU+UNlsGsDG9F20nFm9ukAHU2WQqG4wjT1vfxgbbMfZbZJf/RQflhlwX0bgSv3RHQr26jKC3K7TNM0tErB82yBllwbuKMOV0kkgrmOlr1Qb//ynKym2u4xFs0nFO8rdIn0WDj0/k+eqJWaJAjtEvXjYl/0+VmpTlZj78L/Ms80hGU/EY2MFnwVhv3vSn1g6qvSQY5kPq1/+SiA5aDw7vjn7fVm+AkAAmobx9k+fYK9n8M28DhGmRZ3FjTbNrnkUPw1ypSZsrpu6w6O38op3U+kjYiWYC/F0hgo85Ae9is8V5EsHKZlFrydrp44e7m67LTO/nLowGExR+BKwLNcSmdqSRiaTX6Bwvx2ht/a3CJP1JGQssYhaujDYq1eTwlo1zaN04H782ExUWrFIBOkp2lkbxONEzFd97lG1OTzanI=
+env:
+  matrix:
+  - secure: DXHW5BHLzydJ4xgoAtzTXrupFChO9nX2aNJRkHeBQQMPbm1B/CVLj3EPUIz2pbHKkjg2FJqIi1btsXzLopBDcOl/BtKRv8ihx2Jps4jvZavErwbLWmPxNjV9pMT4k8a+w5UvJ4+FxBlITdl6DcL9NDJ6YBFAjtPVP32wQwZTn1ib/WytWZ27xSav4+CRl94gVdsAHVbVlUigq1Q7WdGlCG2l/iSOtTQILQ6F4F78+ePX9RvLzyikuvQrgWWH5qtPqE/WpCYJAGgZYEza9wlbY0H4elv3/qRp0kJDrw4nnc5EfxJsvk/10+hbU/0FJvu6NXNvKnqwzXsVG+/0nctMPadz6SEJs/VQngcnukUHEzSj459PdXkZnO1UZXicspVRC7h11fCjzz4G80DramWHMuA1rmrTOV/muOvM+0sBcHXC3/RXuCEEYx6kCD4+KKHQJZnL3I98Mqe38LBGkUlb881elQVeli2pLfW5Eco7zyz5tTCkIMHtGVe3cYp520fIILuPch0h9qz2eiQoO7PhztxXOtGPs9EeqSE+XxhUUUPSYaRRYMo3utJpDG33AkhpOV5jvCicjixJdPojefxrIQ+5LZeMet/7X7aWOzKZoQk/DZALVwGFvybdQ4I/BpyskLoh57tXZGvYBlHz3ecBj9H8Zuq59WpZcJe3qwY/hX4=
+services:
+- docker
+before_script:
+- docker login --email='.' --username="${DOCKER_USER}" --password="${DOCKER_PASSWORD}"
+  ${DOCKER_REGISTRY}
+- wget -O /tmp/dumb-init.tar.gz 'https://github.com/Yelp/dumb-init/archive/v0.5.0.tar.gz'
+- tar --strip-components=1 -xf /tmp/dumb-init.tar.gz
+- make build
+script:
+- docker build -t quay.io/docku/dumb-init .
+after_script:
+- docker push quay.io/docku/dumb-init
